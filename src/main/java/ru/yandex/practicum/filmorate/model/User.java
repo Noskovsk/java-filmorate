@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
+@Slf4j
 public class User {
     private long id;
     @NonNull
@@ -26,6 +26,7 @@ public class User {
 
     public void normalaize() {
         if (name.isEmpty()) {
+            log.info("У переданного пользователя: {}, поле name=пусто, устанавливаем равным login.", this);
             this.name = this.login;
         }
     }

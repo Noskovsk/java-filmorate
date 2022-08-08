@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class UserController {
     private Map<Long, User> users = new HashMap();
     private long counter = 0;
@@ -26,6 +28,7 @@ public class UserController {
         user.normalaize();
         user.setId(++counter);
         users.put(user.getId(), user);
+        log.info("Пользователь: {} успешно добавлен в каталог.", user);
         return user;
     }
 
@@ -34,9 +37,11 @@ public class UserController {
         if(users.containsKey(user.getId())) {
             user.normalaize();
             users.put(user.getId(),user);
+            log.info("Данные пользователя: {} успешно обновлены в каталоге.", user);
             return user;
         } else {
-            throw new UnknownObjectException("Такой пользователь не найден!");
+            log.warn("Пользователь: {} не найден!", user);
+            throw new UnknownObjectException("Пользователь не найден!");
         }
     }
 }
