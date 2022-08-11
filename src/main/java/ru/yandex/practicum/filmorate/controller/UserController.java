@@ -35,7 +35,7 @@ public class UserController {
     @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user) throws UnknownObjectException {
         if(users.containsKey(user.getId())) {
-            normalaizeUser(user);
+            this.normalaizeUser(user);
             users.put(user.getId(),user);
             log.info("Данные пользователя: {} успешно обновлены в каталоге.", user);
             return user;
@@ -44,7 +44,8 @@ public class UserController {
             throw new UnknownObjectException("Пользователь не найден!");
         }
     }
-    public static void normalaizeUser(User user) {
+
+    private void normalaizeUser(User user) {
         if (user.getName().isEmpty()) {
             log.info("У переданного пользователя: {}, поле name=пусто, устанавливаем равным login.", user);
             user.setName(user.getLogin());

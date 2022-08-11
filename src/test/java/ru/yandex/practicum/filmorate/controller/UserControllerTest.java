@@ -67,6 +67,26 @@ class UserControllerTest {
     }
 
     @Test
+    void shouldNotPostUserWithLoginOnlySpace() throws Exception {
+        final ResultActions result =
+                mvc.perform(
+                        post("/users")
+                                .content("{\"login\": \"     \",\"email\": \"mail@mail.ru\",\"birthday\": \"1989-08-20\"}")
+                                .contentType(MediaType.APPLICATION_JSON));
+        result.andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void shouldNotPostUserWithNoLoginField() throws Exception {
+        final ResultActions result =
+                mvc.perform(
+                        post("/users")
+                                .content("{\"email\": \"mail@mail.ru\",\"birthday\": \"1989-08-20\"}")
+                                .contentType(MediaType.APPLICATION_JSON));
+        result.andExpect(status().is4xxClientError());
+    }
+
+    @Test
     void shouldNotPostUserWithInvalidEmail() throws Exception {
         final ResultActions result =
                 mvc.perform(

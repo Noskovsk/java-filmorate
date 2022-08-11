@@ -36,7 +36,7 @@ public class FilmController {
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film) throws UnknownObjectException {
         if(films.containsKey(film.getId())) {
-            additionalFilmValidation(film);
+            this.additionalFilmValidation(film);
             films.put(film.getId(),film);
             log.info("Фильм :{}, успешно обновлен в библиотеке", film);
             return film;
@@ -46,7 +46,7 @@ public class FilmController {
         }
     }
 
-    public static void additionalFilmValidation(Film film) {
+    private void additionalFilmValidation(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.warn("Дата релиза у фильма: {} должна быть больше 28 декабря 1895 года.", film.getReleaseDate());
             throw new ValidationException("Дата релиза должна быть больше 28 декабря 1895 года.");

@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.ValidationException;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
@@ -12,8 +11,6 @@ import java.time.LocalDate;
 @Slf4j
 public class Film {
     private long id;
-    @NonNull
-    @NotBlank
     @NotEmpty
     private String name;
     @NonNull
