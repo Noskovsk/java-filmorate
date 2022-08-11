@@ -25,7 +25,7 @@ public class UserController {
 
     @PostMapping(value = "/users")
     public User createUser(@Valid @RequestBody User user) {
-        user.normalaize();
+        normalaizeUser(user);
         user.setId(++counter);
         users.put(user.getId(), user);
         log.info("Пользователь: {} успешно добавлен в каталог.", user);
@@ -35,13 +35,19 @@ public class UserController {
     @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user) throws UnknownObjectException {
         if(users.containsKey(user.getId())) {
-            user.normalaize();
+            normalaizeUser(user);
             users.put(user.getId(),user);
             log.info("Данные пользователя: {} успешно обновлены в каталоге.", user);
             return user;
         } else {
             log.warn("Пользователь: {} не найден!", user);
             throw new UnknownObjectException("Пользователь не найден!");
+        }
+    }
+    public static void normalaizeUser(User user) {
+        if (user.getName().isEmpty()) {
+            log.info("У переданного пользователя: {}, поле name=пусто, устанавливаем равным login.", user);
+            user.setName(user.getLogin());
         }
     }
 }

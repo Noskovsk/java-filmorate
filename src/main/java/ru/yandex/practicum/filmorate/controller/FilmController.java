@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.rmi.activation.UnknownObjectException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,7 @@ public class FilmController {
 
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
-        film.additionalValidation();
+        additionalFilmValidation(film);
         film.setId(++counter);
         films.put(film.getId(), film);
         log.info("Фильм :{}, успешно добавлен в библиотеку", film);
@@ -34,13 +36,20 @@ public class FilmController {
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film) throws UnknownObjectException {
         if(films.containsKey(film.getId())) {
-            film.additionalValidation();
+            additionalFilmValidation(film);
             films.put(film.getId(),film);
             log.info("Фильм :{}, успешно обновлен в библиотеке", film);
             return film;
         } else {
             log.warn("Фильм :{}, не найден в библиотеке!", film);
             throw new UnknownObjectException("Такой фильм не найден!");
+        }
+    }
+
+    public static void additionalFilmValidation(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.warn("Дата релиза у фильма: {} должна быть больше 28 декабря 1895 года.", film.getReleaseDate());
+            throw new ValidationException("Дата релиза должна быть больше 28 декабря 1895 года.");
         }
     }
 }

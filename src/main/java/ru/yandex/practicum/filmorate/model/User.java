@@ -19,15 +19,9 @@ public class User {
     @NotBlank
     @Pattern(regexp = "^\\S*$", message = "Ошибка. В Логине не должно содержаться пробелов!")
     private String login;
-    private String name = "";
+    private String name;
     @NonNull
     @Past
     private LocalDate birthday;
 
-    public void normalaize() {
-        if (name.isEmpty()) {
-            log.info("У переданного пользователя: {}, поле name=пусто, устанавливаем равным login.", this);
-            this.name = this.login;
-        }
-    }
 }
