@@ -14,17 +14,18 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/films")
 @Slf4j
 public class FilmController {
     private Map<Long, Film> films = new HashMap<>();
     private long counter = 0;
 
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> listFilms() {
         return new ArrayList<Film>(films.values());
     }
 
-    @PostMapping(value = "/films")
+    @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
         additionalFilmValidation(film);
         film.setId(++counter);
@@ -33,7 +34,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping("/films")
+    @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) throws UnknownObjectException {
         if(films.containsKey(film.getId())) {
             this.additionalFilmValidation(film);
