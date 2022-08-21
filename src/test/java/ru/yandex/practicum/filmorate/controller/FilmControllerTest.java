@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.NestedServletException;
 
 import org.junit.jupiter.api.function.Executable;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FilmControllerTest {
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    InMemoryFilmStorage inMemoryFilmStorage;
 
     @Test
     void shouldPostNewFilm() throws Exception {
