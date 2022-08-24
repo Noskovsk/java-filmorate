@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.rmi.activation.UnknownObjectException;
 import java.util.List;
 
 public interface FilmStorage {
@@ -11,7 +10,9 @@ public interface FilmStorage {
 
     Film addFilm(Film film) ;
 
-    Film updateFilm(Film film) throws UnknownObjectException;
+    Film updateFilm(Film film);
+
+    Film findFilmById(long filmId);
 
     void additionalFilmValidation(Film film);
 }

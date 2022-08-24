@@ -1,14 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.rmi.activation.UnknownObjectException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -23,12 +21,13 @@ public class InMemoryUserStorage implements UserStorage {
     public User createUser(User user) {
         normalizeUser(user);
         user.setId(++counter);
+        user.setFriendSet(new HashSet<>());
         users.put(user.getId(), user);
         log.info("Пользователь: {} успешно добавлен в каталог.", user);
         return user;
     }
 
-    public User updateUser(User user) throws UnknownObjectException {
+    public User updateUser(User user) {
         if(users.containsKey(user.getId())) {
             this.normalizeUser(user);
             users.put(user.getId(),user);
@@ -36,7 +35,18 @@ public class InMemoryUserStorage implements UserStorage {
             return user;
         } else {
             log.warn("Пользователь: {} не найден!", user);
-            throw new UnknownObjectException("Пользователь не найден!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой пользователь не найден!");
+        }
+    }
+
+    @Override
+    public User findUserById(long userId) {
+        if(users.containsKey(userId)) {
+            log.info("Данные пользователя: {} успешно найдены в каталоге.", userId);
+            return users.get(userId);
+        } else {
+            log.warn("Пользователь с userId: {} не найден!", userId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой пользователь не найден!");
         }
     }
 
@@ -45,6 +55,9 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName().isEmpty()) {
             log.info("У переданного пользователя: {}, поле name=пусто, устанавливаем равным login.", user);
             user.setName(user.getLogin());
+        }
+        if (user.getFriendSet()==null) {
+            user.setFriendSet(new HashSet<>());
         }
     }
 
