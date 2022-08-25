@@ -1,17 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -63,12 +59,5 @@ public class UserController {
     @GetMapping("{userId}/friends/common/{otherUserId}")
     public List<User> getCommonFriends(@PathVariable long userId, @PathVariable long otherUserId) {
         return userService. getCommonFriends(userId, otherUserId);
-    }
-
-
-    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleArgumentNotValidException(final RuntimeException e) {
-        return Map.of("error", "Ошибка валидации параметра", "message", e.getMessage());
     }
 }
