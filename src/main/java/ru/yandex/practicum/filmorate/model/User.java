@@ -21,4 +21,5 @@ public class User {
     @Past
     private LocalDate birthday;
     private Set<Long> friendSet;
+    //private Map<Long> ДРУЖБАу
 }

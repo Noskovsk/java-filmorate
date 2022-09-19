@@ -14,6 +14,8 @@ public class Film {
     @NonNull
     @Size(max = 200, message = "Длина описание не может быть больше 200 символов")
     private String description;
+    private Set<String> genre;
+    private FilmRating ratingMPA;
     @NonNull
     private LocalDate releaseDate;
     @Positive
