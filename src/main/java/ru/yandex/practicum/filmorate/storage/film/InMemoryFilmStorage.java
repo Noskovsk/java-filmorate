@@ -6,17 +6,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ComponentScan
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
+    private final InMemoryUserStorage inMemoryUserStorage;
     private long counter = 0;
+
+    public InMemoryFilmStorage(InMemoryUserStorage inMemoryUserStorage) {
+        this.inMemoryUserStorage = inMemoryUserStorage;
+    }
 
     @Override
     public List<Film> listFilms() {
@@ -35,9 +42,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        if(films.containsKey(film.getId())) {
+        if (films.containsKey(film.getId())) {
             additionalFilmValidation(film);
-            films.put(film.getId(),film);
+            films.put(film.getId(), film);
             log.info("Фильм :{}, успешно обновлен в библиотеке", film);
             return film;
         } else {
@@ -48,7 +55,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film findFilmById(long filmId) {
-        if(films.containsKey(filmId)) {
+        if (films.containsKey(filmId)) {
             log.info("Фильм с filmId: {}, успешно найден в библиотеке", filmId);
             return films.get(filmId);
         } else {
@@ -66,5 +73,31 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getUserLikes() == null) {
             film.setUserLikes(new HashSet<>());
         }
+    }
+
+    @Override
+    public List<Film> getTopFilms(Integer count) {
+        return this
+                .listFilms()
+                .stream()
+                .sorted(Comparator.comparingInt((Film f) -> f.getUserLikes().size()).reversed())
+                .collect(Collectors.toList())
+                .subList(0, (count > this.listFilms().size()) ? this.listFilms().size() : count);
+    }
+
+    @Override
+    public void addLikeToFilm(long filmId, long userId) {
+        Film film = this.findFilmById(filmId);
+        inMemoryUserStorage.findUserById(userId);
+        film.getUserLikes().add(userId);
+        log.info("Фильм с id: {} получил лайк от пользователя id: {}.", filmId, userId);
+    }
+
+    @Override
+    public void removeLikeFromFilm(long filmId, long userId) {
+        Film film = findFilmById(filmId);
+        inMemoryUserStorage.findUserById(userId);
+        film.getUserLikes().remove(userId);
+        log.info("Фильм с id: {} больше не нравится пользователю с id: {}.", filmId, userId);
     }
 }

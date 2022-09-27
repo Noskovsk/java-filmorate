@@ -9,8 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("ru")
 @EntityScan("ru")
 public class FilmorateApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(FilmorateApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FilmorateApplication.class, args);
+    }
 
 }

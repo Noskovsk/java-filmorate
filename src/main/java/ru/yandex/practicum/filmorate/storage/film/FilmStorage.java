@@ -8,11 +8,17 @@ public interface FilmStorage {
 
     List<Film> listFilms();
 
-    Film addFilm(Film film) ;
+    Film addFilm(Film film);
 
     Film updateFilm(Film film);
 
     Film findFilmById(long filmId);
 
     void additionalFilmValidation(Film film);
+
+    List<Film> getTopFilms(Integer count);
+
+    void addLikeToFilm(long filmId, long userId);
+
+    void removeLikeFromFilm(long filmId, long userId);
 }
