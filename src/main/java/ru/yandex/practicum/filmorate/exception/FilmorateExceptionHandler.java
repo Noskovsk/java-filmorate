@@ -14,4 +14,5 @@ public class FilmorateExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleArgumentNotValidException(final RuntimeException e) {
         return Map.of("error", "Ошибка валидации параметра", "message", e.getMessage());
-    }}
+    }
+}

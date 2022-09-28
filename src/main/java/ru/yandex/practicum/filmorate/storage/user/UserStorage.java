@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.user;
+
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserStorage {
 
@@ -9,11 +11,15 @@ public interface UserStorage {
 
     User createUser(User user);
 
-    //TODO поработать с исключениями
     User updateUser(User user);
 
     User findUserById(long userId);
 
-    void normalizeUser(User user);
+    void addFriend(long userId, long friendId);
 
+    void deleteFriend(long userId, long friendId);
+
+    Set<Long> getFriendsId(long userId);
+
+    void normalizeUser(User user);
 }

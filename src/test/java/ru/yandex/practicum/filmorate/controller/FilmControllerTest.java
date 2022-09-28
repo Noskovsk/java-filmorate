@@ -1,35 +1,39 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.NestedServletException;
-
-import org.junit.jupiter.api.function.Executable;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(controllers = {FilmController.class})
+@SpringBootTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@AutoConfigureMockMvc
 class FilmControllerTest {
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
     InMemoryFilmStorage inMemoryFilmStorage;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     void shouldPostNewFilm() throws Exception {
         final ResultActions result =
                 mvc.perform(
                         post("/films")
-                                .content("{\"name\": \"filmname\",\"description\": \"film desc\",\"releaseDate\": \"1989-08-20\",\"duration\": \"100\"}")
+                                .content("{\"name\": \"filmname\",\"description\": \"film desc\",\"releaseDate\": \"1989-08-20\",\"duration\": \"100\",\"mpa\":{\"id\":3,\"name\":null,\"description\":null}}")
                                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -42,7 +46,7 @@ class FilmControllerTest {
         final ResultActions result =
                 mvc.perform(
                         post("/films")
-                                .content("{\"name\": \"\",\"description\": \"film desc\",\"releaseDate\": \"1989-08-20\",\"duration\": \"100\"}")
+                                .content("{\"name\": \"\",\"description\": \"film desc\",\"releaseDate\": \"1989-08-20\",\"duration\": \"100\",\"mpa\":{\"id\":3,\"name\":null,\"description\":null}}")
                                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().is4xxClientError());
@@ -68,7 +72,7 @@ class FilmControllerTest {
                         post("/films")
                                 .content("{\"name\": \"filmname\",\"description\": \""
                                         + new String(new char[199]).replace("\0", "s")
-                                        + "\",\"releaseDate\": \"1989-08-20\",\"duration\": \"100\"}")
+                                        + "\",\"releaseDate\": \"1989-08-20\",\"duration\": \"100\",\"mpa\":{\"id\":3,\"name\":null,\"description\":null}}")
                                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -88,7 +92,7 @@ class FilmControllerTest {
                         final ResultActions result =
                                 mvc.perform(
                                         post("/films")
-                                                .content("{\"name\": \"filmname\",\"description\": \"descr\",\"releaseDate\": \"1895-12-27\",\"duration\": \"100\"}")
+                                                .content("{\"name\": \"filmname\",\"description\": \"descr\",\"releaseDate\": \"1895-12-27\",\"duration\": \"100\",\"mpa\":{\"id\":3,\"name\":null,\"description\":null}}")
                                                 .contentType(MediaType.APPLICATION_JSON));
                     }
                 });
@@ -102,7 +106,7 @@ class FilmControllerTest {
         final ResultActions result =
                 mvc.perform(
                         post("/films")
-                                .content("{\"name\": \"filmname\",\"description\": \"descr\",\"releaseDate\": \"1895-12-28\",\"duration\": \"100\"}")
+                                .content("{\"name\": \"filmname\",\"description\": \"descr\",\"releaseDate\": \"1895-12-28\",\"duration\": \"100\",\"mpa\":{\"id\":3,\"name\":null,\"description\":null}}")
                                 .contentType(MediaType.APPLICATION_JSON));
         result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
