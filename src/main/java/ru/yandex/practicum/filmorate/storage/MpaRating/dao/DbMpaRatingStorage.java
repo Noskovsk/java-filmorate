@@ -6,11 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.mapper.MpaRatingMapper;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.storage.MpaRating.MpaRatingStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +24,7 @@ public class DbMpaRatingStorage implements MpaRatingStorage {
     @Override
     public List<MpaRating> getAllMpaRatings() {
         String ratingsRows = "SELECT * FROM \"Rating_MPA\"";
-        return jdbcTemplate.query(ratingsRows, (rs, rowNum) -> makeMpaRating(rs));
+        return jdbcTemplate.query(ratingsRows, new MpaRatingMapper());
     }
 
     @Override
@@ -38,14 +37,8 @@ public class DbMpaRatingStorage implements MpaRatingStorage {
             log.info("Найден рейтинг c id: {}, название: {}", mpaRating.getId(), mpaRating.getName());
             return mpaRating;
         } else {
-            log.warn("Рейтингов c таким id:{} не найдено!", ratingId);
+            log.error("Рейтингов c таким id:{} не найдено!", ratingId);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Рейтингов c таким id не найдено!");
         }
-    }
-
-    private MpaRating makeMpaRating(ResultSet ratingResultSet) throws SQLException {
-        return new MpaRating(ratingResultSet.getInt("rating_id"),
-                ratingResultSet.getString("name"),
-                ratingResultSet.getString("description"));
     }
 }

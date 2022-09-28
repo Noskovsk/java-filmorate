@@ -19,7 +19,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(@Qualifier(/*"InMemoryUserStorage"*/"DbUserStorage") UserStorage userStorage) {
+    public UserService(@Qualifier("DbUserStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -61,9 +61,11 @@ public class UserService {
         List<Long> friendIdList;
         User user = userStorage.findUserById(userId);
         User otherUser = userStorage.findUserById(otherUserId);
-        friendIdList = userStorage.getFriendsId(user).stream().filter(u -> userStorage.getFriendsId(otherUser).contains(u)).collect(Collectors.toList());
-        for (Long friendId : friendIdList) {
-            friendList.add(userStorage.findUserById(friendId));
+        if (!(userStorage.getFriendsId(user)==null)){
+            friendIdList = userStorage.getFriendsId(user).stream().filter(u -> userStorage.getFriendsId(otherUser).contains(u)).collect(Collectors.toList());
+            for (Long friendId : friendIdList) {
+                friendList.add(userStorage.findUserById(friendId));
+            }
         }
         return friendList;
     }

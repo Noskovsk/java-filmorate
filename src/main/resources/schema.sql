@@ -7,9 +7,7 @@ CREATE TABLE "Film"
     "rating_id"    integer                           NULL,
     "release_date" date                              NOT NULL,
     "duration"     integer                           NULL,
-    CONSTRAINT "pk_Film" PRIMARY KEY (
-                                      "film_id"
-        )
+    CONSTRAINT "pk_Film" PRIMARY KEY ("film_id")
 );
 
 CREATE TABLE "User"
@@ -19,39 +17,29 @@ CREATE TABLE "User"
     "email"     varchar                           NOT NULL,
     "login"     varchar                           NOT NULL,
     "birthdate" date                              NULL,
-    CONSTRAINT "pk_User" PRIMARY KEY (
-                                      "user_id"
-        ),
-    CONSTRAINT "uk_User_email" UNIQUE (
-                                       "email"
-        )
+    CONSTRAINT "pk_User" PRIMARY KEY ("user_id"),
+    CONSTRAINT "uk_User_email" UNIQUE ("email")
 );
 
 CREATE TABLE "Friendship"
 (
     "user_id"   long NOT NULL,
     "friend_id" long NOT NULL,
-    CONSTRAINT "pk_Friendship" PRIMARY KEY (
-                                            "user_id", "friend_id"
-        )
+    CONSTRAINT "pk_Friendship" PRIMARY KEY ("user_id", "friend_id")
 );
 
 CREATE TABLE "Genre"
 (
     "genre_id" long GENERATED ALWAYS AS IDENTITY NOT NULL,
     "name"     varchar                           NOT NULL,
-    CONSTRAINT "pk_Genre" PRIMARY KEY (
-                                       "genre_id"
-        )
+    CONSTRAINT "pk_Genre" PRIMARY KEY ("genre_id")
 );
 
 CREATE TABLE "Films_Genre"
 (
     "film_id"  long NOT NULL,
     "genre_id" long NOT NULL,
-    CONSTRAINT "pk_Films_Genre" PRIMARY KEY (
-                                             "film_id", "genre_id"
-        )
+    CONSTRAINT "pk_Films_Genre" PRIMARY KEY ("film_id", "genre_id")
 );
 
 CREATE TABLE "Rating_MPA"
@@ -59,9 +47,7 @@ CREATE TABLE "Rating_MPA"
     "rating_id"   long GENERATED ALWAYS AS IDENTITY NOT NULL,
     "name"        varchar                           NOT NULL,
     "description" varchar                           NOT NULL,
-    CONSTRAINT "pk_Rating_MPA" PRIMARY KEY (
-                                            "rating_id"
-        )
+    CONSTRAINT "pk_Rating_MPA" PRIMARY KEY ("rating_id")
 );
 
 CREATE TABLE "User_Likes"
