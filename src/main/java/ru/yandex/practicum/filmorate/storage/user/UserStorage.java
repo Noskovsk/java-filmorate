@@ -19,7 +19,7 @@ public interface UserStorage {
 
     void deleteFriend(long userId, long friendId);
 
-    Set<Long> getFriendsId(User user);
+    Set<Long> getFriendsId(long userId);
 
     void normalizeUser(User user);
 }

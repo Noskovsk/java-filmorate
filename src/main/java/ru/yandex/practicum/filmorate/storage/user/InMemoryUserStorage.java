@@ -34,7 +34,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.info("Данные пользователя: {} успешно обновлены в каталоге.", user);
             return user;
         } else {
-            log.warn("Пользователь: {} не найден!", user);
+            log.error("Пользователь: {} не найден!", user);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой пользователь не найден!");
         }
     }
@@ -45,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.info("Данные пользователя: {} успешно найдены в каталоге.", userId);
             return users.get(userId);
         } else {
-            log.warn("Пользователь с userId: {} не найден!", userId);
+            log.error("Пользователь с userId: {} не найден!", userId);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой пользователь не найден!");
         }
     }
@@ -77,13 +77,14 @@ public class InMemoryUserStorage implements UserStorage {
             user.getFriendSet().remove(friendId);
             log.info("Пользователи с id: {} удалил из друзей пользователя с id: {}.", userId, friendId);
         } else {
-            log.warn("Пользователь с friendId: {} не найден среди друзей пользователя с id:{}", friendId, userId);
+            log.error("Пользователь с friendId: {} не найден среди друзей пользователя с id:{}", friendId, userId);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователи не являются друзьями!");
         }
     }
 
     @Override
-    public Set<Long> getFriendsId(User user) {
+    public Set<Long> getFriendsId(long userId) {
+        User user = findUserById(userId);
         return user.getFriendSet();
     }
 }

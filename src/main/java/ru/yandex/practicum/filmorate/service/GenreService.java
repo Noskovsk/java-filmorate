@@ -4,24 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.Genre.dao.DbGenreStorage;
+import ru.yandex.practicum.filmorate.storage.Genre.GenreStorage;
 
 import java.util.List;
 
 @Service
 public class GenreService {
-    private final DbGenreStorage dbGenreStorage;
+    private final GenreStorage genreStorage;
 
     @Autowired
-    public GenreService(@Qualifier("DbGenreStorage") DbGenreStorage dbGenreStorage) {
-        this.dbGenreStorage = dbGenreStorage;
+    public GenreService(@Qualifier("DbGenreStorage") GenreStorage genreStorage) {
+        this.genreStorage = genreStorage;
     }
 
     public List<Genre> getAllGenre() {
-        return dbGenreStorage.getAllGenre();
+        return genreStorage.getAllGenre();
     }
 
     public Genre getGenreById(int genreId) {
-        return dbGenreStorage.getGenreById(genreId);
+        return genreStorage.getGenreById(genreId);
     }
 }

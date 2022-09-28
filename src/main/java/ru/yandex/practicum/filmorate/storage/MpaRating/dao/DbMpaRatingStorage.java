@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.MpaRating.dao;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,13 +14,10 @@ import ru.yandex.practicum.filmorate.storage.MpaRating.MpaRatingStorage;
 import java.util.List;
 
 @Slf4j
-@Component("DbMPARatingStorage")
+@Component("DbMpaRatingStorage")
+@RequiredArgsConstructor
 public class DbMpaRatingStorage implements MpaRatingStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    public DbMpaRatingStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public List<MpaRating> getAllMpaRatings() {

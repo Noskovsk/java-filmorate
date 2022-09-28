@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user.dao;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,13 +9,12 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,17 +22,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component("DbUserStorage")
+@RequiredArgsConstructor
 public class DbUserStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    public DbUserStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public List<User> listUsers() {
         String userRows = "SELECT * FROM \"User\"";
-        return jdbcTemplate.query(userRows, (rs, rowNum) -> makeUser(rs));
+        return jdbcTemplate.query(userRows, new UserMapper(this));
     }
 
     @Override
@@ -64,7 +61,7 @@ public class DbUserStorage implements UserStorage {
             log.info("Данные пользователя: {} успешно обновлены в каталоге. Обновлено строк: {}", user.getId(), rows);
             return user;
         } else {
-            log.warn("Что-то пошло не так! Обновлено строк: {}", rows);
+            log.error("Что-то пошло не так! Обновлено строк: {}", rows);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Что-то пошло не так!");
         }
     }
@@ -77,7 +74,7 @@ public class DbUserStorage implements UserStorage {
             log.info("Найден пользователь c id: {}, логин: {}", user.getId(), user.getLogin());
             return user;
         } else {
-            log.warn("Пользователь с userId: {} не найден!", userId);
+            log.error("Пользователь с userId: {} не найден!", userId);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой пользователь не найден!");
         }
     }
@@ -87,15 +84,8 @@ public class DbUserStorage implements UserStorage {
                 sqlUserRow.getString("email"),
                 sqlUserRow.getString("login"),
                 sqlUserRow.getString("name"),
-                sqlUserRow.getDate("birthdate").toLocalDate(), new HashSet<>());
-    }
-
-    private User makeUser(ResultSet sqlUserResultSet) throws SQLException {
-        return new User(sqlUserResultSet.getLong("user_id"),
-                sqlUserResultSet.getString("email"),
-                sqlUserResultSet.getString("login"),
-                sqlUserResultSet.getString("name"),
-                sqlUserResultSet.getDate("birthdate").toLocalDate(), new HashSet<>());
+                sqlUserRow.getDate("birthdate").toLocalDate(),
+                getFriendsId(sqlUserRow.getLong("user_id")));
     }
 
     @Override
@@ -124,17 +114,18 @@ public class DbUserStorage implements UserStorage {
         if (rows == 1) {
             log.info("Пользователи с id: {} удалил из друзей пользователя с id: {}. Удалено строк {}:", userId, friendId, rows);
         } else {
-            log.warn("Что-то пошло не так! Обновлено строк: {}", rows);
+            log.error("Что-то пошло не так! Обновлено строк: {}", rows);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Что-то пошло не так!");
         }
     }
 
     @Override
-    public Set<Long> getFriendsId(User user) {
+    public Set<Long> getFriendsId(long userId) {
         String selectSql = "SELECT * FROM \"Friendship\" WHERE \"user_id\" = ?";
-        return jdbcTemplate.query(selectSql,
+        Set<Long> friendSet = jdbcTemplate.query(selectSql,
                 (rs, rowNum) -> rs.getLong("friend_id"),
-                user.getId()).stream().collect(Collectors.toSet());
+                userId).stream().collect(Collectors.toSet());
+        return friendSet == null ? new HashSet<>() : friendSet;
     }
 
 }

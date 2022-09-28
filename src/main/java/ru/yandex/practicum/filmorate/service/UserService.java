@@ -50,7 +50,7 @@ public class UserService {
     public List<User> getUserFriends(long userId) {
         User user = userStorage.findUserById(userId);
         List<User> friendList = new ArrayList<>();
-        for (Long friendId : userStorage.getFriendsId(user)) {
+        for (Long friendId : userStorage.getFriendsId(user.getId())) {
             friendList.add(userStorage.findUserById(friendId));
         }
         return friendList;
@@ -61,8 +61,8 @@ public class UserService {
         List<Long> friendIdList;
         User user = userStorage.findUserById(userId);
         User otherUser = userStorage.findUserById(otherUserId);
-        if (!(userStorage.getFriendsId(user)==null)){
-            friendIdList = userStorage.getFriendsId(user).stream().filter(u -> userStorage.getFriendsId(otherUser).contains(u)).collect(Collectors.toList());
+        if (!(userStorage.getFriendsId(user.getId()) == null)) {
+            friendIdList = userStorage.getFriendsId(user.getId()).stream().filter(u -> userStorage.getFriendsId(otherUser.getId()).contains(u)).collect(Collectors.toList());
             for (Long friendId : friendIdList) {
                 friendList.add(userStorage.findUserById(friendId));
             }
