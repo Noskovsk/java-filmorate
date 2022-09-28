@@ -24,10 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class FilmControllerTest {
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
     InMemoryFilmStorage inMemoryFilmStorage;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     void shouldPostNewFilm() throws Exception {

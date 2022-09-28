@@ -61,7 +61,7 @@ public class UserService {
         List<Long> friendIdList;
         User user = userStorage.findUserById(userId);
         User otherUser = userStorage.findUserById(otherUserId);
-        if (!(userStorage.getFriendsId(user.getId()) == null)) {
+        if ((userStorage.getFriendsId(user.getId()) != null) && (userStorage.getFriendsId(otherUser.getId()) != null)) {
             friendIdList = userStorage.getFriendsId(user.getId()).stream().filter(u -> userStorage.getFriendsId(otherUser.getId()).contains(u)).collect(Collectors.toList());
             for (Long friendId : friendIdList) {
                 friendList.add(userStorage.findUserById(friendId));
